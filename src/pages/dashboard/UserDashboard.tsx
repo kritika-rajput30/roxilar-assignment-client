@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import RatingModal from "../../components/RatingForm";
 import StoreRatingsDrawer from "../../components/StoreRatingsDrawer";
 import toast from "react-hot-toast";
+import Loader from "../../components/Loader";
 
 const UserDashboard = () => {
   const [stores, setStores] = useState<any[]>([]);
@@ -131,7 +132,7 @@ const UserDashboard = () => {
       </div>
 
       {loading ? (
-        <div className="text-center py-10 text-gray-500">Loading stores...</div>
+        <div className="text-center py-10 text-gray-500"><Loader/></div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredStores.map((store) => (
@@ -157,8 +158,7 @@ const UserDashboard = () => {
         initialRating={selectedStore?.userRating || null}
         isOpen={showRatingModal}
         onClose={() => setShowRatingModal(false)}
-        onSubmit={handleSubmitRating}
-      />
+        onSubmit={handleSubmitRating} initialComment={null}      />
 
       <StoreRatingsDrawer
         storeId={selectedStore?.store_id}

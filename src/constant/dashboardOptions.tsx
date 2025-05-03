@@ -2,6 +2,7 @@
 
 import {
   HomeIcon,
+  LayoutDashboard,
   Lock,
   ShieldEllipsis,
   Star,
@@ -13,7 +14,8 @@ import {
 
 export const dashboardOptions = {
   user: [
-    { label: "My Profile", path: "/dashboard/user/profile", icon: <User /> },
+    { label: "Dashboard", path: "/dashboard/user", icon: <LayoutDashboard /> },
+
     {
       label: "Change Password",
       path: "/dashboard/user/change-password",

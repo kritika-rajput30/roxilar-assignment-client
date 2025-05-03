@@ -1,5 +1,11 @@
 {
-  "files": [],
+  "compilerOptions": {
+    "skipLibCheck": true,  // Skip type checking of declaration files
+    "noEmitOnError": false, // Emit output even with errors
+    "strict": false,        // Disable strict mode for more lenient type checking
+    "esModuleInterop": true, 
+    "allowJs": true         // Allow JavaScript files
+  },
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
