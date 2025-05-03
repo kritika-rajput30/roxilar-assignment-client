@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { get } from "../../../utils/api";
 import { useSelector } from "react-redux";
@@ -28,12 +27,13 @@ export default function AdminUsers() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userToEdit, setUserToEdit] = useState<User | null>(null);
   const token = useSelector((state: any) => state.auth.token);
+  const [sort, setSort] = useState({ key: "", direction: "asc" });
 
   const fetchUsers = async () => {
     setLoading(true);
     setError("");
     try {
-      const params = Object.entries(filters)
+      const filterParams = Object.entries(filters)
         .filter(([_, v]) => v.trim() !== "")
         .map(
           ([key, value]) =>
@@ -41,7 +41,12 @@ export default function AdminUsers() {
         )
         .join("&");
 
-      const res = await get(`/user?${params}`, {
+      const sortParam = sort.key
+        ? `&sortKey=${sort.key}&sortOrder=${sort.direction}`
+        : "";
+      const query = `${filterParams}${sortParam}`;
+
+      const res = await get(`/user?${query}`, {
         Authorization: `Bearer ${token}`,
       });
 
@@ -56,7 +61,7 @@ export default function AdminUsers() {
 
   useEffect(() => {
     fetchUsers();
-  }, [filters]);
+  }, [filters, sort]);
 
   const badgeColor = (role: string) => {
     return clsx(
@@ -67,6 +72,12 @@ export default function AdminUsers() {
         owner: "bg-green-100 text-green-700",
       }[role.toLowerCase()] || "bg-gray-100 text-gray-700"
     );
+  };
+  const handleSort = (key: string) => {
+    setSort((prev) => ({
+      key,
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
+    }));
   };
 
   const handleEditUser = (user: User) => {
@@ -100,13 +111,36 @@ export default function AdminUsers() {
       </div>
 
       {/* Add New User Button */}
-      <div className="mb-6">
+      <div className="mb-6 flex gap-4 items-center">
         <button
           onClick={handleAddNewUser}
           className="px-4 py-2 bg-primary text-white rounded-md shadow-md hover:bg-primary-dark"
         >
           Add New User
         </button>
+        <div className="flex gap-4">
+          <button
+            onClick={() => handleSort("name")}
+            className={clsx(
+              "px-4 py-2 rounded-md border shadow-sm",
+              sort.key === "name" ? "bg-blue-100 text-blue-700" : "bg-white"
+            )}
+          >
+            Sort by Name{" "}
+            {sort.key === "name" && (sort.direction === "asc" ? "↑" : "↓")}
+          </button>
+
+          <button
+            onClick={() => handleSort("email")}
+            className={clsx(
+              "px-4 py-2 rounded-md border shadow-sm",
+              sort.key === "email" ? "bg-blue-100 text-blue-700" : "bg-white"
+            )}
+          >
+            Sort by Email{" "}
+            {sort.key === "email" && (sort.direction === "asc" ? "↑" : "↓")}
+          </button>
+        </div>
       </div>
 
       {/* Loader & Error */}
@@ -121,6 +155,7 @@ export default function AdminUsers() {
               <tr className="text-left">
                 <th className="border px-4 py-2">Name</th>
                 <th className="border px-4 py-2">Email</th>
+
                 <th className="border px-4 py-2">Address</th>
                 <th className="border px-4 py-2">Role</th>
                 <th className="border px-4 py-2">Actions</th>

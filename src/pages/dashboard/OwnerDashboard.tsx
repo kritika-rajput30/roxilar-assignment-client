@@ -5,6 +5,7 @@ import StoreForm from "../../components/StoreForm";
 import toast from "react-hot-toast";
 import ShowCard from "../../components/ShowCard";
 import StoreRatingsDrawer from "../../components/StoreRatingsDrawer";
+import Loader from "../../components/Loader"; 
 
 type Store = {
   store_id: string;
@@ -16,15 +17,17 @@ type Store = {
 
 const OwnerDashboard: React.FC = () => {
   const [stores, setStores] = useState<Store[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); // 👈 Add loading state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
 
-  const userId = useSelector((state) => state.users.currentUser.id);
-  const token = useSelector((state) => state.auth.token);
+  const userId = useSelector((state: any) => state.users.currentUser.id);
+  const token = useSelector((state: any) => state.auth.token);
 
   const fetchStores = async () => {
+    setLoading(true);
     try {
       const data = await get(`/store/owner/${userId}`, {
         Authorization: `Bearer ${token}`,
@@ -32,6 +35,8 @@ const OwnerDashboard: React.FC = () => {
       setStores(data);
     } catch (err) {
       console.error("Error fetching stores:", err);
+    } finally {
+      setLoading(false); // 👈 Turn off loader
     }
   };
 
@@ -78,31 +83,35 @@ const OwnerDashboard: React.FC = () => {
       setIsModalOpen(false);
       resetForm();
       fetchStores();
-      toast.success("store created successfully!");
+      toast.success("Store saved successfully!");
     } catch (error) {
       console.error("Error saving store:", error);
     }
   };
-  const handleViewRatingsClick = (store: any) => {
+
+  const handleViewRatingsClick = (store: Store) => {
     setSelectedStore(store);
     setShowDrawer(true);
   };
+
   const handleDeleteClick = async (storeId: string) => {
     try {
-      const res = await del(`/store/${storeId}`, {
+      await del(`/store/${storeId}`, {
         Authorization: `Bearer ${token}`,
       });
-
       toast.success("Store deleted successfully!");
+      fetchStores(); // Refresh list after deletion
     } catch (error) {
       console.error("Failed to delete store:", error);
       toast.error("Failed to delete store. Please try again.");
     }
   };
+
   return (
     <div className="p-6">
-     
-      {stores.length === 0 ? (
+      {loading ? (
+        <Loader />
+      ) : stores.length === 0 ? (
         <div className="text-center py-10">
           <p className="mb-4 text-lg">No store found.</p>
           <button
@@ -124,38 +133,18 @@ const OwnerDashboard: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {stores.map((store) => (
-                <ShowCard
+              <ShowCard
                 key={store.store_id}
                 store={store}
                 onEdit={handleEditClick}
                 onDelete={handleDeleteClick}
                 onViewRatings={handleViewRatingsClick}
               />
-              // <div
-              //   key={store.store_id}
-              //   className="bg-white rounded-lg shadow p-4"
-              // >
-              //   <img
-              //     src={store.image}
-              //     alt={store.name}
-              //     className="w-full h-96 object-cover rounded mb-4"
-              //   />
-              //   <h3 className="text-xl font-semibold">{store.name}</h3>
-              //   <p className="text-gray-600">{store.address}</p>
-              //   <p className="text-gray-500 text-sm">{store.email}</p>
-              //   <button
-              //     className="mt-4 text-sm text-blue-600 hover:underline"
-              //     onClick={() => handleEditClick(store)}
-              //   >
-              //     Edit
-              //   </button>
-              // </div>
             ))}
           </div>
         </>
       )}
 
-      {/* StoreForm Modal */}
       <StoreForm
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -173,7 +162,7 @@ const OwnerDashboard: React.FC = () => {
         mode={formMode}
       />
 
-<StoreRatingsDrawer
+      <StoreRatingsDrawer
         storeId={selectedStore?.store_id}
         isOpen={showDrawer}
         onClose={() => setShowDrawer(false)}
