@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { put, post } from "../utils/api";
+import toast from "react-hot-toast";
 
 type User = {
   user_id?: number;
@@ -8,6 +9,7 @@ type User = {
   email: string;
   address: string;
   role: "admin" | "user" | "owner";
+  password?: string; // Add password to the type
 };
 
 interface UserModalProps {
@@ -46,12 +48,12 @@ const UserModal: React.FC<UserModalProps> = ({
           Authorization: `Bearer ${token}`,
         });
       } else {
-        // Add new user
-        await post("/user", user, {
+        // Add new user, including the password if provided
+        await post("/admin/users", user, {
           Authorization: `Bearer ${token}`,
         });
       }
-
+      toast.success("Operation success!");
       onUserUpdated(); // Refresh the user list
       onClose(); // Close the modal
     } catch (err) {
@@ -128,6 +130,22 @@ const UserModal: React.FC<UserModalProps> = ({
                 <option value="owner">Owner</option>
               </select>
             </div>
+
+            {/* Only show the password field when adding a new user */}
+            {!userToEdit && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={user.password || ""}
+                  onChange={(e) => setUser({ ...user, password: e.target.value })}
+                  className="w-full border border-gray-300 p-2 rounded-md"
+                  required
+                />
+              </div>
+            )}
 
             <div className="flex justify-end gap-2">
               <button
