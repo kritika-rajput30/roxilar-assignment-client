@@ -13,8 +13,8 @@ import DashboardLayout from "../components/Layout";
 import UserProfile from "../pages/dashboard/user/UserProfile";
 import UserStores from "../pages/dashboard/user/UserStores";
 import UserRatings from "../pages/dashboard/user/UserRatings";
-import ChangePassword from "../pages/dashboard/user/ChangePassword";
 import AdminStores from "../pages/dashboard/admin/AdminStores";
+import PasswordResetForm from "../components/PasswordResetForm";
 
 // Wrapper for role-based access
 const RoleProtectedRoute = ({ allowedRoles, children }) => {
@@ -86,7 +86,7 @@ const AppRoutes = () => {
         <Route path="profile" element={<UserProfile />} />
         <Route path="stores" element={<UserStores />} />
         <Route path="ratings" element={<UserRatings />} />
-        <Route path="change-password" element={<ChangePassword />} />
+        <Route path="change-password" element={<PasswordResetForm/>} />
       </Route>
 
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
