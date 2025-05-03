@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { get, post, put } from "../../utils/api";
+import { del, get, post, put } from "../../utils/api";
 import { useSelector } from "react-redux";
 import StoreForm from "../../components/StoreForm";
 import toast from "react-hot-toast";
+import ShowCard from "../../components/ShowCard";
+import StoreRatingsDrawer from "../../components/StoreRatingsDrawer";
 
 type Store = {
   store_id: string;
@@ -17,6 +19,7 @@ const OwnerDashboard: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [showDrawer, setShowDrawer] = useState(false);
 
   const userId = useSelector((state) => state.users.currentUser.id);
   const token = useSelector((state) => state.auth.token);
@@ -80,7 +83,22 @@ const OwnerDashboard: React.FC = () => {
       console.error("Error saving store:", error);
     }
   };
+  const handleViewRatingsClick = (store: any) => {
+    setSelectedStore(store);
+    setShowDrawer(true);
+  };
+  const handleDeleteClick = async (storeId: string) => {
+    try {
+      const res = await del(`/store/${storeId}`, {
+        Authorization: `Bearer ${token}`,
+      });
 
+      toast.success("Store deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete store:", error);
+      toast.error("Failed to delete store. Please try again.");
+    }
+  };
   return (
     <div className="p-6">
      
@@ -106,25 +124,32 @@ const OwnerDashboard: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {stores.map((store) => (
-              <div
+                <ShowCard
                 key={store.store_id}
-                className="bg-white rounded-lg shadow p-4"
-              >
-                <img
-                  src={store.image}
-                  alt={store.name}
-                  className="w-full h-96 object-cover rounded mb-4"
-                />
-                <h3 className="text-xl font-semibold">{store.name}</h3>
-                <p className="text-gray-600">{store.address}</p>
-                <p className="text-gray-500 text-sm">{store.email}</p>
-                <button
-                  className="mt-4 text-sm text-blue-600 hover:underline"
-                  onClick={() => handleEditClick(store)}
-                >
-                  Edit
-                </button>
-              </div>
+                store={store}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+                onViewRatings={handleViewRatingsClick}
+              />
+              // <div
+              //   key={store.store_id}
+              //   className="bg-white rounded-lg shadow p-4"
+              // >
+              //   <img
+              //     src={store.image}
+              //     alt={store.name}
+              //     className="w-full h-96 object-cover rounded mb-4"
+              //   />
+              //   <h3 className="text-xl font-semibold">{store.name}</h3>
+              //   <p className="text-gray-600">{store.address}</p>
+              //   <p className="text-gray-500 text-sm">{store.email}</p>
+              //   <button
+              //     className="mt-4 text-sm text-blue-600 hover:underline"
+              //     onClick={() => handleEditClick(store)}
+              //   >
+              //     Edit
+              //   </button>
+              // </div>
             ))}
           </div>
         </>
@@ -146,6 +171,12 @@ const OwnerDashboard: React.FC = () => {
             : { name: "", address: "", email: "", image: "" }
         }
         mode={formMode}
+      />
+
+<StoreRatingsDrawer
+        storeId={selectedStore?.store_id}
+        isOpen={showDrawer}
+        onClose={() => setShowDrawer(false)}
       />
     </div>
   );

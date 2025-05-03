@@ -15,6 +15,7 @@ import UserStores from "../pages/dashboard/user/UserStores";
 import AdminStores from "../pages/dashboard/admin/AdminStores";
 import PasswordResetForm from "../components/PasswordResetForm";
 import AdminUsers from "../pages/dashboard/admin/AdminUsers";
+import OwnerRatings from "../pages/dashboard/owner/OwnerRatings";
 
 // Wrapper for role-based access
 const RoleProtectedRoute = ({ allowedRoles, children }) => {
@@ -76,6 +77,8 @@ const AppRoutes = () => {
       >
         <Route index element={<OwnerDashboard />} />
         <Route path="profile" element={<UserProfile />} />
+        <Route path="ratings" element={<OwnerRatings />} />
+        <Route path="change-password" element={<PasswordResetForm/>} />
       </Route>
 
       <Route
