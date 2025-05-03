@@ -9,7 +9,6 @@ const Sidebar = () => {
   const options = dashboardOptions[role] || [];
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
@@ -39,7 +38,7 @@ const Sidebar = () => {
       <aside
         className={`fixed top-0 left-0 z-50 transform transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-        md:translate-x-0 md:relative w-64 h-screen bg-gray-900 text-white p-5 flex flex-col`}
+        md:translate-x-0 md:relative w-64 h-screen bg-gray-900 text-white p-5 flex flex-col overflow-hidden`}
       >
         {/* Close button for mobile */}
         <div className="flex items-center justify-between mb-10 md:hidden">
@@ -50,9 +49,11 @@ const Sidebar = () => {
         </div>
 
         {/* Title for desktop */}
-        <div className="hidden md:block text-2xl font-bold capitalize mb-10"><span className="text-white">RateHub</span></div>
+        <div className="hidden md:block text-2xl font-bold capitalize mb-10">
+          <span className="text-white">RateHub</span>
+        </div>
 
-        <ul className="space-y-4 flex-1">
+        <ul className="space-y-4">
           {options.map((opt, idx) => (
             <li key={idx}>
               <NavLink
@@ -72,7 +73,7 @@ const Sidebar = () => {
         </ul>
 
         {/* Logout Button */}
-        <div className="pt-6">
+        <div className="pt-6 mt-auto">
           <button
             onClick={() => {
               handleLogout();

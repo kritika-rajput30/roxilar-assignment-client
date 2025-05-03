@@ -14,6 +14,7 @@ import UserProfile from "../pages/dashboard/user/UserProfile";
 import UserStores from "../pages/dashboard/user/UserStores";
 import UserRatings from "../pages/dashboard/user/UserRatings";
 import ChangePassword from "../pages/dashboard/user/ChangePassword";
+import AdminStores from "../pages/dashboard/admin/AdminStores";
 
 // Wrapper for role-based access
 const RoleProtectedRoute = ({ allowedRoles, children }) => {
@@ -53,10 +54,14 @@ const AppRoutes = () => {
         path="/dashboard/admin"
         element={
           <RoleProtectedRoute allowedRoles={[ROLES.ADMIN]}>
-            <AdminDashboard />
+           <DashboardLayout/>
           </RoleProtectedRoute>
         }
-      />
+      >
+          <Route index element={<AdminDashboard />} />
+          <Route path="stores" element={<AdminStores />} />
+
+      </Route>
       <Route
         path="/dashboard/owner"
         element={

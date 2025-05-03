@@ -1,6 +1,6 @@
 // src/constants/dashboardOptions.js
 
-import { HomeIcon, Lock, ShieldEllipsis, Star, User } from "lucide-react";
+import { HomeIcon, Lock, ShieldEllipsis, Star, StarIcon, Store, User, UserIcon } from "lucide-react";
 
   
   export const dashboardOptions = {
@@ -16,6 +16,12 @@ import { HomeIcon, Lock, ShieldEllipsis, Star, User } from "lucide-react";
     ],
     admin: [
       { label: "Dashboard", path: "/dashboard/admin", icon: <ShieldEllipsis /> },
+      { label: "Stores", path: "/dashboard/admin/stores", icon: <Store /> },
+      { label: "Ratings", path: "/dashboard/ratings", icon: <StarIcon/> },
+      { label: "Users", path: "/dashboard/users", icon: <UserIcon/> },
+
+
+
     ],
   };
   
