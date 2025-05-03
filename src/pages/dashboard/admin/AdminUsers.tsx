@@ -1,10 +1,10 @@
-"use client";
 
 import { useEffect, useState } from "react";
 import { get } from "../../../utils/api";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
 import Loader from "../../../components/Loader"; // Update path as needed
+import UserModal from "../../../components/UserModal"; // Import UserModal
 
 type User = {
   user_id: number;
@@ -17,9 +17,16 @@ type User = {
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<User[]>([]);
-  const [filters, setFilters] = useState({ name: "", email: "", address: "", role: "" });
+  const [filters, setFilters] = useState({
+    name: "",
+    email: "",
+    address: "",
+    role: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState<User | null>(null);
   const token = useSelector((state: any) => state.auth.token);
 
   const fetchUsers = async () => {
@@ -28,7 +35,10 @@ export default function AdminUsers() {
     try {
       const params = Object.entries(filters)
         .filter(([_, v]) => v.trim() !== "")
-        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .map(
+          ([key, value]) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+        )
         .join("&");
 
       const res = await get(`/user?${params}`, {
@@ -59,6 +69,16 @@ export default function AdminUsers() {
     );
   };
 
+  const handleEditUser = (user: User) => {
+    setUserToEdit(user);
+    setIsModalOpen(true);
+  };
+
+  const handleAddNewUser = () => {
+    setUserToEdit(null); // Ensure we clear the user state
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">User Management</h1>
@@ -71,17 +91,29 @@ export default function AdminUsers() {
             type="text"
             placeholder={`Filter by ${field}`}
             value={(filters as any)[field]}
-            onChange={(e) => setFilters({ ...filters, [field]: e.target.value })}
+            onChange={(e) =>
+              setFilters({ ...filters, [field]: e.target.value })
+            }
             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         ))}
+      </div>
+
+      {/* Add New User Button */}
+      <div className="mb-6">
+        <button
+          onClick={handleAddNewUser}
+          className="px-4 py-2 bg-primary text-white rounded-md shadow-md hover:bg-primary-dark"
+        >
+          Add New User
+        </button>
       </div>
 
       {/* Loader & Error */}
       {loading && <Loader />}
       {error && <p className="text-red-500 text-center">{error}</p>}
 
-      {/* Table */}
+      {/* User Table */}
       {!loading && (
         <div className="overflow-auto">
           <table className="min-w-full table-auto border border-gray-200 shadow-sm rounded-md">
@@ -91,25 +123,30 @@ export default function AdminUsers() {
                 <th className="border px-4 py-2">Email</th>
                 <th className="border px-4 py-2">Address</th>
                 <th className="border px-4 py-2">Role</th>
-                <th className="border px-4 py-2">Rating</th>
+                <th className="border px-4 py-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.length > 0 ? (
                 users.map((user) => (
-                  <tr key={user.user_id} className="hover:bg-gray-50 transition">
+                  <tr
+                    key={user.user_id}
+                    className="hover:bg-gray-50 transition"
+                  >
                     <td className="border px-4 py-2">{user.name}</td>
                     <td className="border px-4 py-2">{user.email}</td>
                     <td className="border px-4 py-2">{user.address}</td>
                     <td className="border px-4 py-2">
                       <span className={badgeColor(user.role)}>{user.role}</span>
                     </td>
-                    <td className="border px-4 py-2 text-center">
-  {user.role === "owner" && typeof user.ratings === "number"
-    ? user.ratings.toFixed(1)
-    : "-"}
-</td>
-
+                    <td className="border px-4 py-2">
+                      <button
+                        onClick={() => handleEditUser(user)}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                      >
+                        Edit
+                      </button>
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -123,6 +160,14 @@ export default function AdminUsers() {
           </table>
         </div>
       )}
+
+      {/* Modal for Add/Edit User */}
+      <UserModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onUserUpdated={fetchUsers}
+        userToEdit={userToEdit || undefined}
+      />
     </div>
   );
 }
