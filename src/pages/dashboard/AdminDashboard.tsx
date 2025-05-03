@@ -1,11 +1,14 @@
-import React from 'react'
+import React from "react";
+import DashboardStats from "../../components/DashboardStats";
 
-type Props = {}
+type Props = {};
 
 const AdminDashboard = (props: Props) => {
   return (
-    <div className=' text-5xl flex justify-center items-center py-10 text-center'>Welcome Admin!</div>
-  )
-}
+    <>
+      <DashboardStats />
+    </>
+  );
+};
 
-export default AdminDashboard
+export default AdminDashboard;

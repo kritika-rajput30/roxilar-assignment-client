@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from "react";
 import { get, post } from "../../utils/api";
-import ShowCard from "../../components/ShowCard"; // updated from StoreCard
+import ShowCard from "../../components/ShowCard";
 import { useSelector } from "react-redux";
 import RatingModal from "../../components/RatingForm";
 import StoreRatingsDrawer from "../../components/StoreRatingsDrawer";
+import toast from "react-hot-toast";
 
 const UserDashboard = () => {
   const [stores, setStores] = useState<any[]>([]);
@@ -13,11 +15,13 @@ const UserDashboard = () => {
   const [selectedStore, setSelectedStore] = useState<any>(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const token = useSelector((state: any) => state.auth.token);
   const userId = useSelector((state: any) => state.users.currentUser.id);
 
   const fetchStores = async () => {
+    setLoading(true);
     try {
       const data = await get("/store", {
         Authorization: `Bearer ${token}`,
@@ -54,10 +58,12 @@ const UserDashboard = () => {
       );
 
       setStores(enrichedData);
-      console.log(enrichedData);
       setFilteredStores(enrichedData);
     } catch (err) {
       console.error("Error fetching stores:", err);
+      toast.error("Failed to fetch stores");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,38 +87,36 @@ const UserDashboard = () => {
     setSelectedStore(store);
     setShowRatingModal(true);
   };
-  
+
   const handleViewRatingsClick = (store: any) => {
     setSelectedStore(store);
     setShowDrawer(true);
   };
-  
-  
-  
+
   const handleSubmitRating = async (rating: number, comment: string) => {
     try {
-      console.log(selectedStore);
       await post(
         "/rating",
         {
           rating,
-          comment, // include comment
+          comment,
           storeId: selectedStore.store_id,
-          userId: userId,
+          userId,
         },
         {
           Authorization: `Bearer ${token}`,
         }
       );
-  
+
+      toast.success("Rating submitted!");
       setShowRatingModal(false);
       setSelectedStore(null);
       fetchStores();
     } catch (err) {
       console.error("Error submitting rating:", err);
+      toast.error("Failed to submit rating");
     }
   };
-  
 
   return (
     <>
@@ -126,24 +130,27 @@ const UserDashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredStores.map((store) => (
-          <ShowCard
-            key={store.store_id}
-            store={{
-              store_id: store.store_id,
-              name: store.name,
-              address: store.address,
-              email: store.email,
-              image: store.image,
-            }}
-            onEdit={() => {}} // not needed for user
-            onAddRating={handleRateClick}
-            onViewRatings={handleViewRatingsClick}
-
-          />
-        ))}
-      </div>
+      {loading ? (
+        <div className="text-center py-10 text-gray-500">Loading stores...</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredStores.map((store) => (
+            <ShowCard
+              key={store.store_id}
+              store={{
+                store_id: store.store_id,
+                name: store.name,
+                address: store.address,
+                email: store.email,
+                image: store.image,
+              }}
+              onEdit={() => {}}
+              onAddRating={handleRateClick}
+              onViewRatings={handleViewRatingsClick}
+            />
+          ))}
+        </div>
+      )}
 
       <RatingModal
         storeName={selectedStore?.name || ""}
@@ -151,15 +158,13 @@ const UserDashboard = () => {
         isOpen={showRatingModal}
         onClose={() => setShowRatingModal(false)}
         onSubmit={handleSubmitRating}
-
       />
-      <StoreRatingsDrawer
-  storeId={selectedStore?.store_id}
-  isOpen={showDrawer}
-  onClose={() => setShowDrawer(false)}
-  
-/>
 
+      <StoreRatingsDrawer
+        storeId={selectedStore?.store_id}
+        isOpen={showDrawer}
+        onClose={() => setShowDrawer(false)}
+      />
     </>
   );
 };

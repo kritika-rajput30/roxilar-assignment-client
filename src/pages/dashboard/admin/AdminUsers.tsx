@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { get } from "../../../utils/api";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
+import Loader from "../../../components/Loader"; // Update path as needed
 
 type User = {
   user_id: number;
@@ -19,7 +20,7 @@ export default function AdminUsers() {
   const [filters, setFilters] = useState({ name: "", email: "", address: "", role: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const token = useSelector((state) => state.auth.token);
+  const token = useSelector((state: any) => state.auth.token);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -51,10 +52,10 @@ export default function AdminUsers() {
     return clsx(
       "text-xs px-2 py-1 rounded-full font-semibold",
       {
-        Admin: "bg-red-100 text-red-700",
-        Customer: "bg-blue-100 text-blue-700",
-        "Store Owner": "bg-green-100 text-green-700",
-      }[role] || "bg-gray-100 text-gray-700"
+        admin: "bg-red-100 text-red-700",
+        user: "bg-blue-100 text-blue-700",
+        owner: "bg-green-100 text-green-700",
+      }[role.toLowerCase()] || "bg-gray-100 text-gray-700"
     );
   };
 
@@ -76,49 +77,52 @@ export default function AdminUsers() {
         ))}
       </div>
 
-      {/* Loading/Error */}
-      {loading && <p className="text-gray-500">Loading users...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {/* Loader & Error */}
+      {loading && <Loader />}
+      {error && <p className="text-red-500 text-center">{error}</p>}
 
       {/* Table */}
-      <div className="overflow-auto">
-        <table className="min-w-full table-auto border border-gray-200 shadow-sm rounded-md">
-          <thead className="bg-gray-100">
-            <tr className="text-left">
-              <th className="border px-4 py-2">Name</th>
-              <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Address</th>
-              <th className="border px-4 py-2">Role</th>
-              <th className="border px-4 py-2">Rating</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.length > 0 ? (
-              users.map((user) => (
-                <tr key={user.user_id} className="hover:bg-gray-50 transition">
-                  <td className="border px-4 py-2">{user.name}</td>
-                  <td className="border px-4 py-2">{user.email}</td>
-                  <td className="border px-4 py-2">{user.address}</td>
-                  <td className="border px-4 py-2">
-                    <span className={badgeColor(user.role)}>{user.role}</span>
-                  </td>
-                  <td className="border px-4 py-2 text-center">
-                    {user.role === "Store Owner" && user.ratings !== undefined
-                      ? user.ratings.toFixed(1)
-                      : "-"}
+      {!loading && (
+        <div className="overflow-auto">
+          <table className="min-w-full table-auto border border-gray-200 shadow-sm rounded-md">
+            <thead className="bg-gray-100">
+              <tr className="text-left">
+                <th className="border px-4 py-2">Name</th>
+                <th className="border px-4 py-2">Email</th>
+                <th className="border px-4 py-2">Address</th>
+                <th className="border px-4 py-2">Role</th>
+                <th className="border px-4 py-2">Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.length > 0 ? (
+                users.map((user) => (
+                  <tr key={user.user_id} className="hover:bg-gray-50 transition">
+                    <td className="border px-4 py-2">{user.name}</td>
+                    <td className="border px-4 py-2">{user.email}</td>
+                    <td className="border px-4 py-2">{user.address}</td>
+                    <td className="border px-4 py-2">
+                      <span className={badgeColor(user.role)}>{user.role}</span>
+                    </td>
+                    <td className="border px-4 py-2 text-center">
+  {user.role === "owner" && typeof user.ratings === "number"
+    ? user.ratings.toFixed(1)
+    : "-"}
+</td>
+
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="text-center py-6 text-gray-500">
+                    No users found.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="text-center py-6 text-gray-500">
-                  No users found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,7 +6,6 @@ import { HomeIcon, Lock, ShieldEllipsis, Star, StarIcon, Store, User, UserIcon }
   export const dashboardOptions = {
     user: [
       { label: "My Profile", path: "/dashboard/user/profile", icon: <User/> },
-      { label: "My Ratings", path: "/dashboard/user/ratings", icon: <Star /> },
       { label: "Change Password", path: "/dashboard/user/change-password", icon: <Lock /> },
     ],
     owner: [

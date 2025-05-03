@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { get, post, put } from "../../utils/api";
 import { useSelector } from "react-redux";
 import StoreForm from "../../components/StoreForm";
+import toast from "react-hot-toast";
 
 type Store = {
   store_id: string;
@@ -74,6 +75,7 @@ const OwnerDashboard: React.FC = () => {
       setIsModalOpen(false);
       resetForm();
       fetchStores();
+      toast.success("store created successfully!");
     } catch (error) {
       console.error("Error saving store:", error);
     }
