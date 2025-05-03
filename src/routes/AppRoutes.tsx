@@ -60,6 +60,8 @@ const AppRoutes = () => {
       >
           <Route index element={<AdminDashboard />} />
           <Route path="stores" element={<AdminStores />} />
+          <Route path="change-password" element={<PasswordResetForm/>} />
+
 
       </Route>
       <Route

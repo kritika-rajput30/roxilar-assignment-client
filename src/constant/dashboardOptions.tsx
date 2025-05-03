@@ -17,8 +17,9 @@ import { HomeIcon, Lock, ShieldEllipsis, Star, StarIcon, Store, User, UserIcon }
     admin: [
       { label: "Dashboard", path: "/dashboard/admin", icon: <ShieldEllipsis /> },
       { label: "Stores", path: "/dashboard/admin/stores", icon: <Store /> },
-      { label: "Ratings", path: "/dashboard/ratings", icon: <StarIcon/> },
-      { label: "Users", path: "/dashboard/users", icon: <UserIcon/> },
+      { label: "Ratings", path: "/dashboard/admin/ratings", icon: <StarIcon/> },
+      { label: "Users", path: "/dashboard/admin/users", icon: <UserIcon/> },
+      { label: "Change Password", path: "/dashboard/admin/change-password", icon: <Lock /> },
 
 
 

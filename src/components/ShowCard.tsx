@@ -15,7 +15,6 @@ type StoreCardProps = {
   onDelete?: (storeId: string) => void;
   onAddRating?: (storeId: string) => void;
   onViewRatings?: (store: any) => void;
-
 };
 
 type RatingData = {
@@ -23,11 +22,20 @@ type RatingData = {
   totalRatings: number;
 };
 
-const ShowCard: React.FC<StoreCardProps> = ({ store, onEdit, onDelete, onAddRating, onViewRatings }) => {
-      const token = useSelector((state: any) => state.auth.token);
-    
+const ShowCard: React.FC<StoreCardProps> = ({
+  store,
+  onEdit,
+  onDelete,
+  onAddRating,
+  onViewRatings,
+}) => {
+  const token = useSelector((state: any) => state.auth.token);
+
   const role = useSelector((state: any) => state.auth.role);
-  const [rating, setRating] = useState<RatingData>({ averageRating: "0.00", totalRatings: 0 });
+  const [rating, setRating] = useState<RatingData>({
+    averageRating: "0.00",
+    totalRatings: 0,
+  });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,8 +45,7 @@ const ShowCard: React.FC<StoreCardProps> = ({ store, onEdit, onDelete, onAddRati
         const data = await get(`/rating/stats/${store.store_id}`, {
           Authorization: `Bearer ${token}`,
         });
-  
-  
+
         setRating({
           averageRating: data.averageRating ?? "0.00",
           totalRatings: data.totalRatings ?? 0,
@@ -50,10 +57,10 @@ const ShowCard: React.FC<StoreCardProps> = ({ store, onEdit, onDelete, onAddRati
         setLoading(false);
       }
     };
-  
+
     fetchRating();
   }, [store.store_id, token]);
-  
+
   return (
     <div className="bg-white rounded-lg shadow p-4 w-full max-w-md">
       <img
@@ -70,11 +77,18 @@ const ShowCard: React.FC<StoreCardProps> = ({ store, onEdit, onDelete, onAddRati
         {loading ? (
           <p>Loading rating...</p>
         ) : error ? (
-          <p className="text-red-500 border-1 border-red-500  w-min text-nowrap p-[2px]">no ratings</p>
+          <p className="text-red-500 border-1 border-red-500  w-min text-nowrap p-[2px]">
+            no ratings
+          </p>
         ) : (
           <>
-            <p className="flex gap-2"><StarIcon size={18}/> Average Rating: {rating.averageRating}</p>
-            <p className="flex gap-2"> <UsersIcon size={18}/> Total Ratings: {rating.totalRatings}</p>
+            <p className="flex gap-2">
+              <StarIcon size={18} /> Average Rating: {rating.averageRating}
+            </p>
+            <p className="flex gap-2">
+              {" "}
+              <UsersIcon size={18} /> Total Ratings: {rating.totalRatings}
+            </p>
           </>
         )}
       </div>
@@ -97,23 +111,22 @@ const ShowCard: React.FC<StoreCardProps> = ({ store, onEdit, onDelete, onAddRati
             </button>
           </>
         )}
-       {role === "user" && (
-  <>
-    <button
-      className="text-sm text-green-600 hover:underline"
-      onClick={() => onAddRating?.(store)}
-    >
-      Add Rating
-    </button>
-    <button
-      className="text-sm text-purple-600  cursor-pointer"
-      onClick={() => onViewRatings?.(store)}
-    >
-      View All Ratings
-    </button>
-  </>
-)}
-
+        <button
+          className="text-sm text-purple-600  cursor-pointer"
+          onClick={() => onViewRatings?.(store)}
+        >
+          View All Ratings
+        </button>
+        {role === "user" && (
+          <>
+            <button
+              className="text-sm text-green-600 hover:underline"
+              onClick={() => onAddRating?.(store)}
+            >
+              Add Rating
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

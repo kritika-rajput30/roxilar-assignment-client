@@ -4,6 +4,7 @@ import { del, get, post, put } from "../../../utils/api";
 import StoreForm from "../../../components/StoreForm";
 import ShowCard from "../../../components/ShowCard";
 import toast from "react-hot-toast";
+import StoreRatingsDrawer from "../../../components/StoreRatingsDrawer";
 
 type Store = {
   store_id: string;
@@ -20,6 +21,7 @@ const AdminStores: React.FC = () => {
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [filteredStores, setFilteredStores] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showDrawer, setShowDrawer] = useState(false);
 
   const userId = useSelector((state) => state.users.currentUser.id);
   const token = useSelector((state) => state.auth.token);
@@ -67,6 +69,10 @@ const AdminStores: React.FC = () => {
       console.error("Error fetching stores:", err);
     }
   };
+  const handleViewRatingsClick = (store: any) => {
+    setSelectedStore(store);
+    setShowDrawer(true);
+  };
 
   useEffect(() => {
     fetchStores();
@@ -100,15 +106,13 @@ const AdminStores: React.FC = () => {
       const res = await del(`/store/${storeId}`, {
         Authorization: `Bearer ${token}`,
       });
-  
-      console.log(res);
+
       toast.success("Store deleted successfully!");
     } catch (error) {
       console.error("Failed to delete store:", error);
       toast.error("Failed to delete store. Please try again.");
     }
   };
-  
 
   const handleStoreSubmit = async (
     values: Omit<Store, "store_id">,
@@ -178,6 +182,7 @@ const AdminStores: React.FC = () => {
                 store={store}
                 onEdit={handleEditClick}
                 onDelete={handleDeleteClick}
+                onViewRatings={handleViewRatingsClick}
               />
             ))}
           </div>
@@ -200,6 +205,12 @@ const AdminStores: React.FC = () => {
             : { name: "", address: "", email: "", image: "" }
         }
         mode={formMode}
+      />
+
+      <StoreRatingsDrawer
+        storeId={selectedStore?.store_id}
+        isOpen={showDrawer}
+        onClose={() => setShowDrawer(false)}
       />
     </div>
   );
