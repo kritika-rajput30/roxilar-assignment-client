@@ -38,7 +38,6 @@ const ShowCard: React.FC<StoreCardProps> = ({ store, onEdit, onDelete, onAddRati
           Authorization: `Bearer ${token}`,
         });
   
-        console.log("Rating Data:", data);
   
         setRating({
           averageRating: data.averageRating ?? "0.00",

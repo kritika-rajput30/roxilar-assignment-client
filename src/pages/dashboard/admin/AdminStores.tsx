@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { get, post, put } from "../../../utils/api";
+import { del, get, post, put } from "../../../utils/api";
 import StoreForm from "../../../components/StoreForm";
 import ShowCard from "../../../components/ShowCard";
+import toast from "react-hot-toast";
 
 type Store = {
   store_id: string;
@@ -17,7 +18,7 @@ const AdminStores: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
- const [filteredStores, setFilteredStores] = useState<any[]>([]);
+  const [filteredStores, setFilteredStores] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const userId = useSelector((state) => state.users.currentUser.id);
@@ -28,7 +29,7 @@ const AdminStores: React.FC = () => {
       const data = await get("/store", {
         Authorization: `Bearer ${token}`,
       });
-  
+
       const enrichedData = await Promise.all(
         data.map(async (store: any) => {
           try {
@@ -40,14 +41,17 @@ const AdminStores: React.FC = () => {
                 Authorization: `Bearer ${token}`,
               }).catch(() => null),
             ]);
-  
+
             return {
               ...store,
               userRating: userRatingRes?.[0]?.rating || null,
               overallRating: statsRes?.averageRating || "N/A",
             };
           } catch (error) {
-            console.error(`Failed to fetch ratings for store ${store.store_id}:`, error);
+            console.error(
+              `Failed to fetch ratings for store ${store.store_id}:`,
+              error
+            );
             return {
               ...store,
               userRating: null,
@@ -56,30 +60,29 @@ const AdminStores: React.FC = () => {
           }
         })
       );
-  
+
       setStores(enrichedData);
       setFilteredStores(enrichedData);
     } catch (err) {
       console.error("Error fetching stores:", err);
     }
   };
-  
-  
-    useEffect(() => {
-      fetchStores();
-    }, []);
-  
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value.toLowerCase();
-      setSearchQuery(value);
-      setFilteredStores(
-        stores.filter(
-          (store) =>
-            store.name.toLowerCase().includes(value) ||
-            store.address.toLowerCase().includes(value)
-        )
-      );
-    };
+
+  useEffect(() => {
+    fetchStores();
+  }, []);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    setSearchQuery(value);
+    setFilteredStores(
+      stores.filter(
+        (store) =>
+          store.name.toLowerCase().includes(value) ||
+          store.address.toLowerCase().includes(value)
+      )
+    );
+  };
 
   const handleAddClick = () => {
     setFormMode("add");
@@ -92,6 +95,20 @@ const AdminStores: React.FC = () => {
     setSelectedStore(store);
     setIsModalOpen(true);
   };
+  const handleDeleteClick = async (storeId: string) => {
+    try {
+      const res = await del(`/store/${storeId}`, {
+        Authorization: `Bearer ${token}`,
+      });
+  
+      console.log(res);
+      toast.success("Store deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete store:", error);
+      toast.error("Failed to delete store. Please try again.");
+    }
+  };
+  
 
   const handleStoreSubmit = async (
     values: Omit<Store, "store_id">,
@@ -155,11 +172,15 @@ const AdminStores: React.FC = () => {
             </button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {filteredStores.map((store) => (
-    <ShowCard key={store.store_id} store={store} onEdit={handleEditClick} />
-  ))}
-</div>
-
+            {filteredStores.map((store) => (
+              <ShowCard
+                key={store.store_id}
+                store={store}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+              />
+            ))}
+          </div>
         </>
       )}
 
