@@ -54,3 +54,21 @@ const del = (endpoint: string, headers: HeadersInit = {}) =>
   });
 
 export { get, post, put, del };
+
+export const getAllRatingsForStore = async (req: Request, res: Response) => {
+    const { storeId } = req.query;
+  
+    if (!storeId) return res.status(400).json({ error: "storeId is required" });
+  
+    try {
+      const ratings = await prisma.rating.findMany({
+        where: { store_id: String(storeId) },
+        orderBy: { createdAt: "desc" },
+      });
+  
+      res.status(200).json(ratings);
+    } catch (error) {
+      console.error("Failed to fetch ratings:", error);
+      res.status(500).json({ error: "Failed to fetch ratings" });
+    }
+  };

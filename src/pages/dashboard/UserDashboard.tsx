@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { get, post } from "../../utils/api";
-import StoreCard from "../../components/StoreCard";
+import ShowCard from "../../components/ShowCard"; // updated from StoreCard
 import { useSelector } from "react-redux";
 import RatingModal from "../../components/RatingForm";
+import StoreRatingsDrawer from "../../components/StoreRatingsDrawer";
 
 const UserDashboard = () => {
   const [stores, setStores] = useState<any[]>([]);
@@ -11,8 +12,10 @@ const UserDashboard = () => {
 
   const [selectedStore, setSelectedStore] = useState<any>(null);
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
 
   const token = useSelector((state: any) => state.auth.token);
+  const userId = useSelector((state: any) => state.users.currentUser.id);
 
   const fetchStores = async () => {
     try {
@@ -22,24 +25,36 @@ const UserDashboard = () => {
 
       const enrichedData = await Promise.all(
         data.map(async (store: any) => {
-          const [userRating, stats] = await Promise.all([
-            get(`/rating?storeId=${store.store_id}`, {
-              Authorization: `Bearer ${token}`,
-            }),
-            get(`/rating/stats/${store.store_id}`, {
-              Authorization: `Bearer ${token}`,
-            }),
-          ]);
+          try {
+            const [userRatingRes, statsRes] = await Promise.all([
+              get(`/rating?storeId=${store.store_id}`, {
+                Authorization: `Bearer ${token}`,
+              }),
+              get(`/rating/stats/${store.store_id}`, {
+                Authorization: `Bearer ${token}`,
+              }),
+            ]);
 
-          return {
-            ...store,
-            userRating: userRating?.[0]?.rating || null,
-            overallRating: stats?.averageRating || "N/A",
-          };
+            return {
+              ...store,
+              userRating: userRatingRes?.[0]?.rating ?? null,
+              overallRating: statsRes?.averageRating ?? "0.00",
+              totalRatings: statsRes?.totalRatings ?? 0,
+            };
+          } catch (err) {
+            console.warn(`Error fetching ratings for store ${store.store_id}:`, err);
+            return {
+              ...store,
+              userRating: null,
+              overallRating: "0.00",
+              totalRatings: 0,
+            };
+          }
         })
       );
 
       setStores(enrichedData);
+      console.log(enrichedData);
       setFilteredStores(enrichedData);
     } catch (err) {
       console.error("Error fetching stores:", err);
@@ -48,7 +63,7 @@ const UserDashboard = () => {
 
   useEffect(() => {
     fetchStores();
-  }, []);
+  }, [stores]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
@@ -66,23 +81,33 @@ const UserDashboard = () => {
     setSelectedStore(store);
     setShowRatingModal(true);
   };
-
-  const handleSubmitRating = async (rating: number) => {
-    try {
-      // Get the token from the Redux store or wherever it's stored
-      const token = useSelector((state: any) => state.auth.token);
   
-      // Submit rating with Authorization header
-      await post("/rating", {
-        rating,
-        storeId: selectedStore.store_id,
-      }, {
-        Authorization: `Bearer ${token}`,
-      });
+  const handleViewRatingsClick = (store: any) => {
+    setSelectedStore(store);
+    setShowDrawer(true);
+  };
+  
+  
+  
+  const handleSubmitRating = async (rating: number, comment: string) => {
+    try {
+      console.log(selectedStore);
+      await post(
+        "/rating",
+        {
+          rating,
+          comment, // include comment
+          storeId: selectedStore.store_id,
+          userId: userId,
+        },
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
   
       setShowRatingModal(false);
       setSelectedStore(null);
-      fetchStores(); // Refresh the store list after rating
+      fetchStores();
     } catch (err) {
       console.error("Error submitting rating:", err);
     }
@@ -103,19 +128,20 @@ const UserDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredStores.map((store) => (
-          <div key={store.store_id}>
-            <StoreCard
-              store={{
-                store_id: store.store_id,
-                name: store.name,
-                address: store.address,
-                image: store.image,
-                overallRating: store.overallRating,
-                userRating: store.userRating,
-              }}
-              onRateClick={handleRateClick}
-            />
-          </div>
+          <ShowCard
+            key={store.store_id}
+            store={{
+              store_id: store.store_id,
+              name: store.name,
+              address: store.address,
+              email: store.email,
+              image: store.image,
+            }}
+            onEdit={() => {}} // not needed for user
+            onAddRating={handleRateClick}
+            onViewRatings={handleViewRatingsClick}
+
+          />
         ))}
       </div>
 
@@ -125,7 +151,15 @@ const UserDashboard = () => {
         isOpen={showRatingModal}
         onClose={() => setShowRatingModal(false)}
         onSubmit={handleSubmitRating}
+
       />
+      <StoreRatingsDrawer
+  storeId={selectedStore?.store_id}
+  isOpen={showDrawer}
+  onClose={() => setShowDrawer(false)}
+  
+/>
+
     </>
   );
 };
