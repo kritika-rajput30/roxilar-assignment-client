@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { dashboardOptions } from "../constant/dashboardOptions";
+import { logout } from "../store/slices/authSlice";
 
 const Sidebar = () => {
   const role = useSelector((state) => state.auth.role);
@@ -12,7 +13,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleLogout = () => {
-    dispatch({ type: "LOGOUT" });
+    dispatch(logout());
     navigate("/auth");
   };
 

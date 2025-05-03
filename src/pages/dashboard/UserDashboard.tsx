@@ -63,7 +63,7 @@ const UserDashboard = () => {
 
   useEffect(() => {
     fetchStores();
-  }, [stores]);
+  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();

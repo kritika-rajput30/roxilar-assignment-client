@@ -53,7 +53,7 @@ const ShowCard: React.FC<StoreCardProps> = ({ store, onEdit, onDelete, onAddRati
     };
   
     fetchRating();
-  }, [store.store_id, token,rating]);
+  }, [store.store_id, token]);
   
   return (
     <div className="bg-white rounded-lg shadow p-4 w-full max-w-md">

@@ -1,11 +1,17 @@
 // components/StoreRatingsDrawer.tsx
 import React, { useEffect, useState } from "react";
-import { get } from "../utils/api";
+import { get, put } from "../utils/api";
 import { useSelector } from "react-redux";
+import RatingCard from "./RatingCard";
+import RatingModal from "./RatingForm";
 
-const StoreRatingsDrawer = ({ storeId, isOpen, onClose }: any) => {
+const StoreRatingsDrawer = ({ storeId, isOpen, onClose, selectedStore }: any) => {
   const [ratings, setRatings] = useState([]);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(null);
+
   const token = useSelector((state: any) => state.auth.token);
+  const userId = useSelector((state: any) => state.auth.userId);
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -26,30 +32,73 @@ const StoreRatingsDrawer = ({ storeId, isOpen, onClose }: any) => {
     }
   }, [storeId, isOpen]);
 
+  const handleUpdate = (rating: any) => {
+    setSelectedRating(rating);
+    setShowRatingModal(true);
+  };
+
+  const handleSubmitRating = async (rating,comment) => {
+    await put(
+        `/rating/${selectedRating.rating_id}`,
+        {
+          rating,
+          comment
+         
+        },
+        {
+          Authorization: `Bearer ${token}`,
+        }
+      );
+  
+
+    setShowRatingModal(false);
+    setSelectedRating(null);
+    // Optionally re-fetch the ratings list
+  };
+
   return (
-    <div
-      className={`fixed top-0 right-0 w-96 h-full bg-white shadow-lg transition-transform duration-300 z-50 ${
-        isOpen ? "translate-x-0" : "translate-x-full"
-      }`}
-    >
-      <div className="flex justify-between items-center p-4 border-b">
-        <h2 className="text-xl font-semibold">Ratings</h2>
-        <button onClick={onClose} className="text-red-500">Close</button>
+    <>
+      <div
+        className={`fixed top-0 right-0 w-96 h-full bg-white shadow-lg transition-transform duration-300 z-50 ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex justify-between items-center p-4 border-b">
+          <h2 className="text-xl font-semibold">Ratings</h2>
+          <button onClick={onClose} className="text-red-500">
+            Close
+          </button>
+        </div>
+        <div className="p-4 overflow-y-auto max-h-full">
+          {ratings.length > 0 ? (
+            ratings.map((rating: any, index: number) => (
+              <RatingCard
+                key={index}
+                rating={rating}
+                currentUserId={userId}
+                onUpdate={handleUpdate}
+              />
+            ))
+          ) : (
+            <p>No ratings found for this store.</p>
+          )}
+        </div>
       </div>
-      <div className="p-4 overflow-y-auto max-h-full">
-        {ratings.length > 0 ? (
-          ratings.map((rating: any, index: number) => (
-            <div key={index} className="mb-4 border-b pb-2">
-              <p className="text-sm">⭐ {rating.rating}/5</p>
-              <p className="text-sm text-gray-700">{rating.comment}</p>
-              <p className="text-xs text-gray-400">{new Date(rating.createdAt).toLocaleString()}</p>
-            </div>
-          ))
-        ) : (
-          <p>No ratings found for this store.</p>
-        )}
-      </div>
-    </div>
+
+      {/* Rating Modal */}
+      {showRatingModal && (
+        <RatingModal
+          storeName={selectedStore?.name || ""}
+          initialRating={selectedRating}
+          isOpen={showRatingModal}
+          onClose={() => {
+            setShowRatingModal(false);
+            setSelectedRating(null);
+          }}
+          onSubmit={handleSubmitRating}
+        />
+      )}
+    </>
   );
 };
 
