@@ -12,9 +12,9 @@ import AdminDashboard from "../pages/dashboard/AdminDashboard";
 import DashboardLayout from "../components/Layout";
 import UserProfile from "../pages/dashboard/user/UserProfile";
 import UserStores from "../pages/dashboard/user/UserStores";
-import UserRatings from "../pages/dashboard/user/UserRatings";
 import AdminStores from "../pages/dashboard/admin/AdminStores";
 import PasswordResetForm from "../components/PasswordResetForm";
+import AdminUsers from "../pages/dashboard/admin/AdminUsers";
 
 // Wrapper for role-based access
 const RoleProtectedRoute = ({ allowedRoles, children }) => {
@@ -60,6 +60,8 @@ const AppRoutes = () => {
       >
           <Route index element={<AdminDashboard />} />
           <Route path="stores" element={<AdminStores />} />
+          <Route path="users" element={<AdminUsers />} />
+
           <Route path="change-password" element={<PasswordResetForm/>} />
 
 
@@ -87,7 +89,6 @@ const AppRoutes = () => {
         <Route index element={<UserDashboard />} />
         <Route path="profile" element={<UserProfile />} />
         <Route path="stores" element={<UserStores />} />
-        <Route path="ratings" element={<UserRatings />} />
         <Route path="change-password" element={<PasswordResetForm/>} />
       </Route>
 
