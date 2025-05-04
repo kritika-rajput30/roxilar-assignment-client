@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { get } from "../../../utils/api";
 import { useSelector } from "react-redux";
 import clsx from "clsx";
-import Loader from "../../../components/Loader"; // Update path as needed
-import UserModal from "../../../components/UserModal"; // Import UserModal
+import Loader from "../../../components/Loader";
+import UserModal from "../../../components/UserModal";
 
 type User = {
   user_id: number;
@@ -86,7 +86,7 @@ export default function AdminUsers() {
   };
 
   const handleAddNewUser = () => {
-    setUserToEdit(null); // Ensure we clear the user state
+    setUserToEdit(null);
     setIsModalOpen(true);
   };
 
@@ -94,7 +94,6 @@ export default function AdminUsers() {
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">User Management</h1>
 
-      {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {["name", "email", "address", "role"].map((field) => (
           <input
@@ -110,7 +109,6 @@ export default function AdminUsers() {
         ))}
       </div>
 
-      {/* Add New User Button */}
       <div className="mb-6 flex gap-4 items-center">
         <button
           onClick={handleAddNewUser}
@@ -143,11 +141,9 @@ export default function AdminUsers() {
         </div>
       </div>
 
-      {/* Loader & Error */}
       {loading && <Loader />}
       {error && <p className="text-red-500 text-center">{error}</p>}
 
-      {/* User Table */}
       {!loading && (
         <div className="overflow-auto">
           <table className="min-w-full table-auto border border-gray-200 shadow-sm rounded-md">
@@ -196,7 +192,6 @@ export default function AdminUsers() {
         </div>
       )}
 
-      {/* Modal for Add/Edit User */}
       <UserModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

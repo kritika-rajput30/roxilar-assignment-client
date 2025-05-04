@@ -1,5 +1,4 @@
-// src/slices/ratingSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Rating {
   id: string;
@@ -18,7 +17,7 @@ const initialState: RatingState = {
 };
 
 const ratingSlice = createSlice({
-  name: 'ratings',
+  name: "ratings",
   initialState,
   reducers: {
     setRatings: (state, action: PayloadAction<Rating[]>) => {

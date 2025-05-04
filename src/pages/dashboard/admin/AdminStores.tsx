@@ -34,7 +34,7 @@ const AdminStores: React.FC = () => {
       const data = await get("/store", {
         Authorization: `Bearer ${token}`,
       });
-  
+
       const enrichedData = await Promise.all(
         data.map(async (store: any) => {
           try {
@@ -46,14 +46,17 @@ const AdminStores: React.FC = () => {
                 Authorization: `Bearer ${token}`,
               }).catch(() => null),
             ]);
-  
+
             return {
               ...store,
               userRating: userRatingRes?.[0]?.rating || null,
               overallRating: statsRes?.averageRating || "N/A",
             };
           } catch (error) {
-            console.error(`Failed to fetch ratings for store ${store.store_id}:`, error);
+            console.error(
+              `Failed to fetch ratings for store ${store.store_id}:`,
+              error
+            );
             return {
               ...store,
               userRating: null,
@@ -62,7 +65,7 @@ const AdminStores: React.FC = () => {
           }
         })
       );
-  
+
       setStores(enrichedData);
       setFilteredStores(enrichedData);
     } catch (err) {
@@ -71,7 +74,7 @@ const AdminStores: React.FC = () => {
       setLoading(false);
     }
   };
-  
+
   const handleViewRatingsClick = (store: any) => {
     setSelectedStore(store);
     setShowDrawer(true);
@@ -159,43 +162,41 @@ const AdminStores: React.FC = () => {
         />
       </div>
       {loading ? (
-  <Loader />
-) : stores.length === 0 ? (
-  <div className="text-center py-10">
-    <p className="mb-4 text-lg">No store found.</p>
-    <button
-      className="bg-primary text-white px-6 py-2 rounded shadow hover:bg-primary-dark"
-      onClick={handleAddClick}
-    >
-      Add Store
-    </button>
-  </div>
-) : (
-  <>
-    <div className="flex justify-end mb-4">
-      <button
-        className="bg-primary text-white px-6 py-2 rounded shadow hover:bg-primary-dark"
-        onClick={handleAddClick}
-      >
-        Add Store
-      </button>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {filteredStores.map((store) => (
-        <ShowCard
-          key={store.store_id}
-          store={store}
-          onEdit={handleEditClick}
-          onDelete={handleDeleteClick}
-          onViewRatings={handleViewRatingsClick}
-        />
-      ))}
-    </div>
-  </>
-)}
+        <Loader />
+      ) : stores.length === 0 ? (
+        <div className="text-center py-10">
+          <p className="mb-4 text-lg">No store found.</p>
+          <button
+            className="bg-primary text-white px-6 py-2 rounded shadow hover:bg-primary-dark"
+            onClick={handleAddClick}
+          >
+            Add Store
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="flex justify-end mb-4">
+            <button
+              className="bg-primary text-white px-6 py-2 rounded shadow hover:bg-primary-dark"
+              onClick={handleAddClick}
+            >
+              Add Store
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredStores.map((store) => (
+              <ShowCard
+                key={store.store_id}
+                store={store}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+                onViewRatings={handleViewRatingsClick}
+              />
+            ))}
+          </div>
+        </>
+      )}
 
-
-      {/* StoreForm Modal */}
       <StoreForm
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

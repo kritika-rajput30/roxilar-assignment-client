@@ -1,5 +1,3 @@
-// src/constants/dashboardOptions.js
-
 import {
   HomeIcon,
   LayoutDashboard,

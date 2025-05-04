@@ -6,6 +6,6 @@
 }
 @import "tailwindcss";
 @theme {
-  --color-primary: oklch(0.3319 0.7176 271.48); /* purple-600 */
-  --color-primary-dark: oklch(0.2587 0.6745 272.09); /* purple-700 */
+  --color-primary: oklch(0.3319 0.7176 271.48); 
+  --color-primary-dark: oklch(0.2587 0.6745 272.09); 
 }

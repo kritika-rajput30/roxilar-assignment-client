@@ -17,7 +17,6 @@ import PasswordResetForm from "../components/PasswordResetForm";
 import AdminUsers from "../pages/dashboard/admin/AdminUsers";
 import OwnerRatings from "../pages/dashboard/owner/OwnerRatings";
 
-// Wrapper for role-based access
 const RoleProtectedRoute = ({ allowedRoles, children }) => {
   const role = useSelector((state) => state.auth.role);
   return hasRole(role, allowedRoles) ? (
@@ -35,7 +34,6 @@ const AppRoutes = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/auth" element={<AuthPage />} />
 
-      {/* Redirect to appropriate dashboard based on role */}
       <Route
         path="/dashboard"
         element={
@@ -55,17 +53,15 @@ const AppRoutes = () => {
         path="/dashboard/admin"
         element={
           <RoleProtectedRoute allowedRoles={[ROLES.ADMIN]}>
-           <DashboardLayout/>
+            <DashboardLayout />
           </RoleProtectedRoute>
         }
       >
-          <Route index element={<AdminDashboard />} />
-          <Route path="stores" element={<AdminStores />} />
-          <Route path="users" element={<AdminUsers />} />
+        <Route index element={<AdminDashboard />} />
+        <Route path="stores" element={<AdminStores />} />
+        <Route path="users" element={<AdminUsers />} />
 
-          <Route path="change-password" element={<PasswordResetForm/>} />
-
-
+        <Route path="change-password" element={<PasswordResetForm />} />
       </Route>
       <Route
         path="/dashboard/owner"
@@ -78,7 +74,7 @@ const AppRoutes = () => {
         <Route index element={<OwnerDashboard />} />
         <Route path="profile" element={<UserProfile />} />
         <Route path="ratings" element={<OwnerRatings />} />
-        <Route path="change-password" element={<PasswordResetForm/>} />
+        <Route path="change-password" element={<PasswordResetForm />} />
       </Route>
 
       <Route
@@ -92,7 +88,7 @@ const AppRoutes = () => {
         <Route index element={<UserDashboard />} />
         <Route path="profile" element={<UserProfile />} />
         <Route path="stores" element={<UserStores />} />
-        <Route path="change-password" element={<PasswordResetForm/>} />
+        <Route path="change-password" element={<PasswordResetForm />} />
       </Route>
 
       <Route path="/unauthorized" element={<UnauthorizedPage />} />

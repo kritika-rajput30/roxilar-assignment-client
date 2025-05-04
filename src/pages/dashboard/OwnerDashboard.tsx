@@ -5,7 +5,7 @@ import StoreForm from "../../components/StoreForm";
 import toast from "react-hot-toast";
 import ShowCard from "../../components/ShowCard";
 import StoreRatingsDrawer from "../../components/StoreRatingsDrawer";
-import Loader from "../../components/Loader"; 
+import Loader from "../../components/Loader";
 
 type Store = {
   store_id: string;
@@ -17,7 +17,7 @@ type Store = {
 
 const OwnerDashboard: React.FC = () => {
   const [stores, setStores] = useState<Store[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // 👈 Add loading state
+  const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
@@ -36,7 +36,7 @@ const OwnerDashboard: React.FC = () => {
     } catch (err) {
       console.error("Error fetching stores:", err);
     } finally {
-      setLoading(false); // 👈 Turn off loader
+      setLoading(false);
     }
   };
 
@@ -100,7 +100,7 @@ const OwnerDashboard: React.FC = () => {
         Authorization: `Bearer ${token}`,
       });
       toast.success("Store deleted successfully!");
-      fetchStores(); // Refresh list after deletion
+      fetchStores();
     } catch (error) {
       console.error("Failed to delete store:", error);
       toast.error("Failed to delete store. Please try again.");

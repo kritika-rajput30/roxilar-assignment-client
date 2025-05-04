@@ -1,5 +1,4 @@
-// src/slices/storeSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Store {
   id: string;
@@ -18,7 +17,7 @@ const initialState: StoreState = {
 };
 
 const storeSlice = createSlice({
-  name: 'stores',
+  name: "stores",
   initialState,
   reducers: {
     setStores: (state, action: PayloadAction<Store[]>) => {

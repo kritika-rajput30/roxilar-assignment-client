@@ -1,5 +1,4 @@
-// src/slices/userSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
   id: string;
@@ -10,7 +9,7 @@ interface User {
 }
 
 interface UserState {
-  currentUser?: User;  // Currently logged-in user
+  currentUser?: User; // Currently logged-in user
 }
 
 const initialState: UserState = {
@@ -18,7 +17,7 @@ const initialState: UserState = {
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     setCurrentUser: (state, action: PayloadAction<User>) => {
