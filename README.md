@@ -1,34 +1,44 @@
-# Ratehub - Client
+# 🎯 Ratehub - Client
 
 This is the **frontend** of the Ratehub application built using **React**, **Vite**, **TypeScript**, **Tailwind CSS**, **Formik**, and **Yup** for form handling and validation.
 
-## ⚙️ Technologies Used
+## 🌐 Live Demo
+
+[🔗 Demo Video](https://www.loom.com/share/fb6385215f694fb383be8483e262a9b8?sid=8d9296f5-8569-402f-a5dc-0afea2620556)  
+[🖼 UI Screenshots](![Screenshot 2025-05-04 124629](https://github.com/user-attachments/assets/710757e3-f366-4457-b857-7f1485c24e1c)
+)
+
+---
+
+## 🧰 Tech Stack
 
 - React + Vite
 - TypeScript
 - Tailwind CSS
-- Formik
-- Yup
+- Formik & Yup (forms & validation)
 - React Router DOM
+
+---
 
 ## 🚀 Getting Started
 
-### 1. Install Dependencies
+### 📁 Clone the Repository
 
 ```bash
-cd client
+git clone https://github.com/yourusername/Ratehub.git
+cd Ratehub/client
+```
+### Install Dependencies
+```bash
 npm install
 ```
-
-### 2. Start the Development Server
+### Run the App
 ```bash
 npm run dev
 ```
+Create a .env file in the root of the client directory and add the following:
 
-### Styling
-Tailwind CSS is already configured and used throughout the app.
+```env
 
-For customizing Tailwind, edit:
-```bash
-tailwind.config.ts
+VITE_API_BASE_URL="http://localhost:5000/api"
 ```
