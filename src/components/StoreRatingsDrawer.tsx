@@ -1,11 +1,15 @@
-// components/StoreRatingsDrawer.tsx
 import React, { useEffect, useState } from "react";
 import { get, put } from "../utils/api";
 import { useSelector } from "react-redux";
 import RatingCard from "./RatingCard";
 import RatingModal from "./RatingForm";
 
-const StoreRatingsDrawer = ({ storeId, isOpen, onClose, selectedStore }: any) => {
+const StoreRatingsDrawer = ({
+  storeId,
+  isOpen,
+  onClose,
+  selectedStore,
+}: any) => {
   const [ratings, setRatings] = useState([]);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [selectedRating, setSelectedRating] = useState(null);
@@ -37,23 +41,20 @@ const StoreRatingsDrawer = ({ storeId, isOpen, onClose, selectedStore }: any) =>
     setShowRatingModal(true);
   };
 
-  const handleSubmitRating = async (rating,comment) => {
+  const handleSubmitRating = async (rating, comment) => {
     await put(
-        `/rating/${selectedRating.rating_id}`,
-        {
-          rating,
-          comment
-         
-        },
-        {
-          Authorization: `Bearer ${token}`,
-        }
-      );
-  
+      `/rating/${selectedRating.rating_id}`,
+      {
+        rating,
+        comment,
+      },
+      {
+        Authorization: `Bearer ${token}`,
+      }
+    );
 
     setShowRatingModal(false);
     setSelectedRating(null);
-    // Optionally re-fetch the ratings list
   };
 
   return (
@@ -85,7 +86,6 @@ const StoreRatingsDrawer = ({ storeId, isOpen, onClose, selectedStore }: any) =>
         </div>
       </div>
 
-      {/* Rating Modal */}
       {showRatingModal && (
         <RatingModal
           storeName={selectedStore?.name || ""}

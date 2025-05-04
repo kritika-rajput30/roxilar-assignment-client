@@ -9,7 +9,7 @@ type User = {
   email: string;
   address: string;
   role: "admin" | "user" | "owner";
-  password?: string; // Add password to the type
+  password?: string;
 };
 
 interface UserModalProps {
@@ -43,19 +43,17 @@ const UserModal: React.FC<UserModalProps> = ({
 
     try {
       if (userToEdit) {
-        // Update user
         await put(`/user/${userToEdit.user_id}`, user, {
           Authorization: `Bearer ${token}`,
         });
       } else {
-        // Add new user, including the password if provided
         await post("/admin/users", user, {
           Authorization: `Bearer ${token}`,
         });
       }
       toast.success("Operation success!");
-      onUserUpdated(); // Refresh the user list
-      onClose(); // Close the modal
+      onUserUpdated();
+      onClose();
     } catch (err) {
       console.error(err);
       setError("Failed to save user.");
@@ -108,9 +106,7 @@ const UserModal: React.FC<UserModalProps> = ({
               <input
                 type="text"
                 value={user.address}
-                onChange={(e) =>
-                  setUser({ ...user, address: e.target.value })
-                }
+                onChange={(e) => setUser({ ...user, address: e.target.value })}
                 className="w-full border border-gray-300 p-2 rounded-md"
                 required
               />
@@ -131,7 +127,6 @@ const UserModal: React.FC<UserModalProps> = ({
               </select>
             </div>
 
-            {/* Only show the password field when adding a new user */}
             {!userToEdit && (
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">
@@ -140,7 +135,9 @@ const UserModal: React.FC<UserModalProps> = ({
                 <input
                   type="password"
                   value={user.password || ""}
-                  onChange={(e) => setUser({ ...user, password: e.target.value })}
+                  onChange={(e) =>
+                    setUser({ ...user, password: e.target.value })
+                  }
                   className="w-full border border-gray-300 p-2 rounded-md"
                   required
                 />

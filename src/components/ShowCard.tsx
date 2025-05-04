@@ -72,7 +72,6 @@ const ShowCard: React.FC<StoreCardProps> = ({
       <p className="text-gray-600">{store.address}</p>
       <p className="text-gray-500 text-sm">{store.email}</p>
 
-      {/* Rating Section */}
       <div className="mt-2 text-sm text-gray-700">
         {loading ? (
           <p>Loading rating...</p>
@@ -93,7 +92,6 @@ const ShowCard: React.FC<StoreCardProps> = ({
         )}
       </div>
 
-      {/* Role-based buttons */}
       <div className="mt-4 flex gap-3">
         {(role === "admin" || role === "owner") && (
           <>

@@ -19,14 +19,16 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Mobile Top Navbar */}
       <div className="md:hidden absolute top-2 p-4 flex-col justify-between items-center">
-        <button className=" " onClick={() => setIsOpen(true)} aria-label="Open Menu">
+        <button
+          className=" "
+          onClick={() => setIsOpen(true)}
+          aria-label="Open Menu"
+        >
           <Menu />
         </button>
       </div>
 
-      {/* Sidebar for Desktop */}
       <aside className="hidden md:flex flex-col w-64 h-screen bg-gray-900 text-white p-5">
         <div className="text-2xl font-bold capitalize mb-10">
           <span className="text-white">RateHub</span>
@@ -61,16 +63,13 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      {/* Mobile Sidebar Drawer */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex">
-          {/* Overlay */}
           <div
             className="absolute inset-0 bg-black bg-opacity-50"
             onClick={() => setIsOpen(false)}
           />
 
-          {/* Drawer */}
           <aside className="relative z-50 w-64 bg-gray-900 text-white p-5 h-full">
             <div className="flex items-center justify-between mb-10">
               <div className="text-2xl font-bold">{role} Dashboard</div>
