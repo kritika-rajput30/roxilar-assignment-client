@@ -23,10 +23,6 @@ npm run build
 ```
 
 ⚙️ Environment Variables
-Make sure to add your VITE_API_URL in a .env file:
-
--env
--Copy
--Edit
+ Make sure to add your VITE_API_URL in a .env file:
 -VITE_API_URL=http://localhost:5000
 
